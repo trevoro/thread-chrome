@@ -227,6 +227,30 @@ Gmail.prototype.inboxUrl = function() {
 
 }
 
+Gmail.prototype.messageBody = function(index) {
+  var messages, body;
+  
+  messages = gmail._body().find('.ii.gt.adP');
+
+  if (!index) var index = messages.length - 1;
+
+  if (messages.length > 0) {
+    body = $(messages[index])
+      .find('div')
+      .first();
+  }
+
+  return body;
+}
+
+Gmail.prototype.messageBodyText = function(index) {
+  return this.messageBody(index).text();
+}
+
+Gmail.prototype.messageBodyHtml = function(index) {
+  return this.messageBody(index).html();
+}
+
 Gmail.prototype.insertCss = function(csslink) {
   var css = $('<link rel="stylesheet" type="text/css">');
   css.attr('href', csslink);
