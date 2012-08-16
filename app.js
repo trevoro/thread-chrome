@@ -18,7 +18,7 @@ var options = {
   development: true,
   logLevel: 'debug',
   cssLink: 'styles/ebb.css',
-  apiHost: 'http://localhost:8080'
+  apiHost: 'http://ebb-when.herokuapp.com'
 }
 
 // --- Libraries 
@@ -123,15 +123,14 @@ Gmail.prototype.createEvent = function(callback) {
     thread_id: this.threadId(),
     message_id: null,
     inbound: true,
-    start_date: null,
-    duration: null,
-    contact_email: null
+    start_date: Date(),
+    duration: 30,
+    contact_email: 'notimplemented@example.com'
   }
 
-  var response = JSON.stringify({event: event}, null, 2);
-  console.log(response);
+  console.log(event);
 
-  $.post(options.apiHost + '/api/events.json', response, function(data) {
+  $.post(options.apiHost + '/api/events.json', {event:event}, function(data) {
     log.info('created event');
     if (callback)
       return callback(null)
