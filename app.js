@@ -116,7 +116,11 @@ Gmail.prototype.loadOriginal = function(id, callback) {
 
 
 Gmail.prototype.createEvent = function(callback) {
- // just posts the threadID to the appropriate API endpoint
+  // just posts the threadID to the appropriate API endpoint
+
+  if (!this.isThread()) 
+    if (callback) return callback(false);
+
   var event = {
     user_email: this.emailAddress(),
     subject: this.threadSubject(),
@@ -168,21 +172,8 @@ Gmail.prototype.postOriginal = function(id, callback) {
 
 }
 
-Gmail.prototype.frame = function() {
-  var frame, canvas;
-  canvas = document.getElementById('canvas_frame');
-
-  if (canvas !== null) {
-    frame = (canvas.contentWindow || canvas.contentDocument);
-    if (frame.document) 
-      frame = frame.docuemnt
-  }
-  return frame;
-}
-
 Gmail.prototype.logo = function() {
-  var frame = this.frame();
-  return $('[role=banner]', frame);
+  return this._canvas.find('[role=banner]');
 }
 
 Gmail.prototype.insertCss = function() {
