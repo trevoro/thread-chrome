@@ -142,6 +142,89 @@ Gmail.prototype.createEvent = function(callback) {
 
 }
 
+/*
+// --- JSON Client
+// just messin' around.
+
+var Client = function(options) {
+  if (typeof(options) !== 'object') 
+    throw new TypeError ('options (object) is required');
+
+  this._url = options.url;
+  this._pretty = options.pretty || false;
+  this._timeout = options.timeout || 0;
+  this._contentType = 'application/json';
+  this._acceptsType = 'json'; // json, jsonp, xml, html or text
+
+  this.contentWriters = {
+    'application/json': function(v) {
+      if (this.pretty) {
+        return JSON.stringify(v, null, 2);
+      } else {
+        return JSON.stringify(v);
+      }
+    }
+  }
+
+}
+
+Client.prototype._request = function(method, path, data, callback) {
+  var self = this;
+  var ajaxOptions = {
+    type: 'GET', 
+    url: urlWithParams,
+    data: data,
+    contentType: self._contentType,
+    dataType: self._acceptsType,
+    timeout: self._timeout,
+    headers: {},
+    async: true,
+    global: true,
+    //content: window
+  }
+
+  ajaxOptions.success = function(data) {
+    return callback(null, data);
+  }
+
+  ajaxOptions.error = function(xhr, type) {
+    return callback(xhr, type);
+  }
+
+  $.ajax(ajaxOptions)
+
+}
+
+Client.prototype.serialize = function(data) {
+  return this.contentWriters[this._contentType](data);
+}
+
+Client.prototype.get = function(path, callback) {
+  this._request('GET', path, null, function(err, req, res, robj) {
+    return callback(err, req, res); 
+  });
+}
+
+Client.prototype.post = function(path, obj, callback) {
+  this._request('POST', path, obj, function(err, req, res, robj) {
+    return callback(err, req, res, robj);
+  });
+}
+
+Client.prototype.put = function(path, obj, callback) {
+  this._request('PUT', path, obj, function(err, req, res, robj) {
+    return callback(err, req, res, robj);
+  });
+}
+
+Client.prototype.del = function(path, callback) {
+  this._request('DELETE', path, null, function(err, req, res, robj) {
+    return callback(err, req, res); 
+  });
+}
+
+*/
+
 Gmail.prototype.postOriginal = function(id, callback) {
   if (typeof(id) !== 'string') 
     throw new TypeError('id (string) is required');
@@ -244,11 +327,42 @@ Gmail.prototype.messageBody = function(index) {
 }
 
 Gmail.prototype.messageBodyText = function(index) {
-  return this.messageBody(index).text();
+  var body = this.messageBody(index);
+  if (body)
+    return body.text();
 }
 
 Gmail.prototype.messageBodyHtml = function(index) {
-  return this.messageBody(index).html();
+  var body = this.messageBody(index);
+  if (body)
+    return body.html();
+}
+
+Gmail.prototype.addActionButton = function(label, index) {
+
+  if (typeof(label) !== 'string')
+    throw new TypeError('label (string) is required');
+ 
+  if (!index) 
+    index = 0;
+  
+  var style="-webkit-user-select: none;";
+  var label = "Create Thread";
+  var tooltip = "Create Thread";
+  
+  var toInject = 
+    '<div class="G-Ni J-J5-Ji">' +
+    '<div class="T-I J-J5-Ji lS T-I-ax7 ar7" thrd_act="' + index + '"' +
+    ' role="button" tabindex="0" style="' + style + '"' + 
+    ' aria-label="Create Thread" data-tooltip="' + tooltip + '">' +
+    '<div class="asa"><span class="Ykrj7h">' + label + '</span>' +
+    '<div class="T-I-J3 J-J5-Ji"></div></div></div>'
+
+  this._canvas().find('.iH')
+    .children()
+    .first()
+    .append(toInject);
+
 }
 
 Gmail.prototype.insertCss = function(csslink) {
