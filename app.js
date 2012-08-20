@@ -276,7 +276,19 @@ Gmail.prototype.banner = function() {
 }
 
 Gmail.prototype.emailAddress = function() {
-  return document.title.split(/ - /)[1];
+
+  //['#guser nobr b','#gbmpc','.gbpc','#gbg6','#gbg4']
+
+  var e = undefined;
+  $('.gbpc .gbps2, #gbg6, #gbg4', this._canvas()).each(function(i, elements) {
+    console.log($(elements).text());
+    e = $(elements).text();
+    if (e != undefined) {
+      return false;
+    }
+  });
+
+  return e; //document.title.split(/ - /)[1];
 }
 
 Gmail.prototype.numUnread = function() {
