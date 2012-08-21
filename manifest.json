@@ -1,12 +1,12 @@
 {
-  "name": "ebb",
+  "name": "thread",
   "version": "0.0.1",
   "description": "calendars made easy",
   "default_locale": "en",
   "manifest_version" : 2,
   "browser_action": {
     "default_icon":  "icons/icon.png",
-    "default_title": "ebb",
+    "default_title": "thread",
     "default_popup": "lib/popup/index.html"
   },
 
@@ -31,7 +31,7 @@
     "http://mail.google.com/*",
     "https://mail.google.com/",
     "http://localhost:3000/",
-    "http://ebb-when.herokuapp.com/"
+    "http://thread.herokuapp.com/"
   ],
 
 

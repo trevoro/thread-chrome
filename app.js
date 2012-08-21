@@ -14,11 +14,11 @@
 
 // --- Configuration
 var options = {
-  name: 'ebb',
+  name: 'thread-chrome',
   development: true,
   logLevel: 'debug',
-  cssLink: 'styles/ebb.css',
-  apiHost: 'http://ebb-when.herokuapp.com'
+  cssLink: 'styles/thread.css',
+  apiHost: 'http://thread.herokuapp.com'
 }
 
 // --- Libraries 
@@ -77,11 +77,12 @@ Logger.prototype.error  = function(msg) { this._print('ERROR',  msg); }
 
 var Gmail = function() {
   this.inboxLink = null;
+  this.inConversationView = false;
+  this._eventQueues = {};
   
   if (!$) 
     throw new Error('Zepto must be initialized first');
 
-  this.view = 'conversation';
 }
 
 Gmail.prototype.threadId = function() {
@@ -279,22 +280,47 @@ Gmail.prototype.addActionButton = function(label, index) {
     index = 0;
   
   var style="-webkit-user-select: none;";
-  var label = "Create Thread";
-  var tooltip = "Create Thread";
+  var label = label;
+  var tooltip = label;
   
   var toInject = 
     '<div class="G-Ni J-J5-Ji">' +
     '<div class="T-I J-J5-Ji lS T-I-ax7 ar7" thrd_act="' + index + '"' +
     ' role="button" tabindex="0" style="' + style + '"' + 
-    ' aria-label="Create Thread" data-tooltip="' + tooltip + '">' +
+    ' aria-label="' + label + '" data-tooltip="' + tooltip + '">' +
     '<div class="asa"><span class="Ykrj7h">' + label + '</span>' +
     '<div class="T-I-J3 J-J5-Ji"></div></div></div>'
 
-  this._canvas().find('.iH')
+  return this._canvas().find('.iH')
     .children()
     .first()
     .append(toInject);
 
+}
+
+
+Gmail.prototype.on = function(event, callback) {
+  if (!this._eventQueues[event])
+    this._eventQueues[event] = [];
+  
+  this._eventQueues[event].push(callback);
+}
+
+Gmail.prototype._event = function() {
+  var name, args;
+
+  if (arguments.length == 0) 
+    throw new Error('name (string) must be provided')
+
+  name = arguments[0];
+  
+  if (arguments.length > 1) 
+    args = Array.prototype.slice.call(arguments, 1);
+
+  for (var i in this._eventQueues[name]) {
+    var next = this._eventQueues[name][i];
+    next.apply(this, args);
+  }
 }
 
 Gmail.prototype.bindDOM = function() {
@@ -302,36 +328,21 @@ Gmail.prototype.bindDOM = function() {
   log.trace('binding to DOMSubtreeModified');
 
   this._canvas().bind('DOMSubtreeModified', function(element) {
-    // do something with the element if necessary
-    // this can be faster / less scope
-
-    console.log(element);
-    log.debug('mutation event source: ' + element.srcElement.className);
-    log.debug('mutation event target: ' + element.srcElement.className);
-    // look type (mutationevent).srcelement.className
-
-    /*
-    if (self._canvas().find('ha').length > 0) {
-      // fire an event called 'view' with a param 'conversation'
-      log.debug('conversation view');
+    // view change event handling
+    if (self._canvas().find('.ha').length > 0) {
+      if (self.inConversationView == false) {
+        self.inConversationView = true;
+        self._event('viewchange', 'conversation');
+      }
     } else {
-      // fire an event called 'view' with a param 'thread'
-      log.debug('thread view');
+      if (self.inConversationView == true) {
+        self.inConversationView = false;
+        self._event('viewchange', 'thread');
+      }
     }
-    */
 
 
   });
-
-  /*
-  this._canvas().bind('DOMNodeInserted', function(element) {
-    console.log(element);
-    log.debug('mutation event source: ' + element.srcElement.className);
-    log.debug('mutation event target: ' + element.srcElement.className);
-  });
-  */
-  
-
 }
 
 Gmail.prototype.insertCss = function(csslink) {
@@ -362,8 +373,7 @@ Gmail.prototype.addDeveloperToolbar = function() {
     self._body().find(selector).on('click', action)
   }
 
-  this._body()
-    .prepend(template);
+  this._body().prepend(template);
 
   clickButton('#ebb #actions #submit', function() {
     id = gmail.threadId();
@@ -489,6 +499,20 @@ var main = function() {
   if (options.development) {
     gmail.addDeveloperToolbar();
   }
+
+  gmail.on('viewchange', function(view) {
+    log.debug('view changed to: ' + view);
+    if (view === 'conversation') {
+      var button = gmail.addActionButton('Thread');
+
+      button.on('click', function() {
+        log.trace('\'Thread\' button clicked!');
+        id = gmail.threadId();
+        self.postOriginal(id);
+      });
+
+    }
+  });
 
   gmail.bindDOM();
 
