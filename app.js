@@ -271,23 +271,29 @@ Gmail.prototype.messageBodyHtml = function(index) {
     return body.html();
 }
 
-Gmail.prototype.addActionButton = function(label, index) {
+Gmail.prototype.addActionButton = function(label, options) {
 
   if (typeof(label) !== 'string')
     throw new TypeError('label (string) is required');
- 
-  if (!index) 
-    index = 0;
-  
-  var style="-webkit-user-select: none;";
+
+  var defaultOptions = {
+    index: 0,
+    tooltip: label,
+    style: "-webkit-user-select: none;"
+  }
+
+  if (!options)
+    options = defaultOptions;
+
+  //XXX iterate through defaultoptions and apply to options Obj
+
   var label = label;
-  var tooltip = label;
-  
+
   var toInject = 
     '<div class="G-Ni J-J5-Ji">' +
-    '<div class="T-I J-J5-Ji lS T-I-ax7 ar7" thrd_act="' + index + '"' +
-    ' role="button" tabindex="0" style="' + style + '"' + 
-    ' aria-label="' + label + '" data-tooltip="' + tooltip + '">' +
+    '<div class="T-I J-J5-Ji lS T-I-ax7 ar7" thrd_act="' + options.index + '"' +
+    ' role="button" tabindex="0" style="' + options.style + '"' + 
+    ' aria-label="' + label + '" data-tooltip="' + options.tooltip + '">' +
     '<div class="asa"><span class="Ykrj7h">' + label + '</span>' +
     '<div class="T-I-J3 J-J5-Ji"></div></div></div>'
 
@@ -343,6 +349,32 @@ Gmail.prototype.bindDOM = function() {
 
 
   });
+}
+
+
+Gmail.prototype.notify = function(message, timeout) {
+  var self = this;
+
+  if (!message)
+    throw new TypeError('message (string) is required');
+
+  if (!timeout)
+    timeout = 5000; // before we hide the notification item
+
+  this._canvas()
+    .find('.vh')
+    .html(message);
+
+  this._canvas().find('.UD').css('visibility', 'visible');
+  this._canvas().find('.UB').css('visibility', 'visible');
+  this._canvas().find('.vh').css('visibility', 'visible');
+
+  setTimeout(function() {
+    self._canvas().find('.UD').attr('style', '');
+    self._canvas().find('.UB').attr('style', '');
+    self._canvas().find('.vh').attr('style', '');
+  }, timeout);
+
 }
 
 Gmail.prototype.insertCss = function(csslink) {
@@ -507,8 +539,8 @@ var main = function() {
 
       button.on('click', function() {
         log.trace('\'Thread\' button clicked!');
-        id = gmail.threadId();
-        self.postOriginal(id);
+        gmail.postOriginal(gmail.threadId());
+        gmail.notify('Created a new Thread');
       });
 
     }
