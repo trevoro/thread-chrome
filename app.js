@@ -15,7 +15,7 @@
 // --- Configuration
 var options = {
   name: 'thread-chrome',
-  development: true,
+  development: false,
   logLevel: 'debug',
   cssLink: 'styles/thread.css',
   apiHost: 'http://thread.herokuapp.com'
