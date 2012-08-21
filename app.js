@@ -1,6 +1,6 @@
 /*
 
-   ebb chrome extension
+   thread - chrome extension
 
    TODO:
 
@@ -80,6 +80,8 @@ var Gmail = function() {
   
   if (!$) 
     throw new Error('Zepto must be initialized first');
+
+  this.view = 'conversation';
 }
 
 Gmail.prototype.threadId = function() {
@@ -142,88 +144,6 @@ Gmail.prototype.createEvent = function(callback) {
 
 }
 
-/*
-// --- JSON Client
-// just messin' around.
-
-var Client = function(options) {
-  if (typeof(options) !== 'object') 
-    throw new TypeError ('options (object) is required');
-
-  this._url = options.url;
-  this._pretty = options.pretty || false;
-  this._timeout = options.timeout || 0;
-  this._contentType = 'application/json';
-  this._acceptsType = 'json'; // json, jsonp, xml, html or text
-
-  this.contentWriters = {
-    'application/json': function(v) {
-      if (this.pretty) {
-        return JSON.stringify(v, null, 2);
-      } else {
-        return JSON.stringify(v);
-      }
-    }
-  }
-
-}
-
-Client.prototype._request = function(method, path, data, callback) {
-  var self = this;
-  var ajaxOptions = {
-    type: 'GET', 
-    url: urlWithParams,
-    data: data,
-    contentType: self._contentType,
-    dataType: self._acceptsType,
-    timeout: self._timeout,
-    headers: {},
-    async: true,
-    global: true,
-    //content: window
-  }
-
-  ajaxOptions.success = function(data) {
-    return callback(null, data);
-  }
-
-  ajaxOptions.error = function(xhr, type) {
-    return callback(xhr, type);
-  }
-
-  $.ajax(ajaxOptions)
-
-}
-
-Client.prototype.serialize = function(data) {
-  return this.contentWriters[this._contentType](data);
-}
-
-Client.prototype.get = function(path, callback) {
-  this._request('GET', path, null, function(err, req, res, robj) {
-    return callback(err, req, res); 
-  });
-}
-
-Client.prototype.post = function(path, obj, callback) {
-  this._request('POST', path, obj, function(err, req, res, robj) {
-    return callback(err, req, res, robj);
-  });
-}
-
-Client.prototype.put = function(path, obj, callback) {
-  this._request('PUT', path, obj, function(err, req, res, robj) {
-    return callback(err, req, res, robj);
-  });
-}
-
-Client.prototype.del = function(path, callback) {
-  this._request('DELETE', path, null, function(err, req, res, robj) {
-    return callback(err, req, res); 
-  });
-}
-
-*/
 
 Gmail.prototype.postOriginal = function(id, callback) {
   if (typeof(id) !== 'string') 
@@ -377,6 +297,43 @@ Gmail.prototype.addActionButton = function(label, index) {
 
 }
 
+Gmail.prototype.bindDOM = function() {
+  var self = this;
+  log.trace('binding to DOMSubtreeModified');
+
+  this._canvas().bind('DOMSubtreeModified', function(element) {
+    // do something with the element if necessary
+    // this can be faster / less scope
+
+    console.log(element);
+    log.debug('mutation event source: ' + element.srcElement.className);
+    log.debug('mutation event target: ' + element.srcElement.className);
+    // look type (mutationevent).srcelement.className
+
+    /*
+    if (self._canvas().find('ha').length > 0) {
+      // fire an event called 'view' with a param 'conversation'
+      log.debug('conversation view');
+    } else {
+      // fire an event called 'view' with a param 'thread'
+      log.debug('thread view');
+    }
+    */
+
+
+  });
+
+  /*
+  this._canvas().bind('DOMNodeInserted', function(element) {
+    console.log(element);
+    log.debug('mutation event source: ' + element.srcElement.className);
+    log.debug('mutation event target: ' + element.srcElement.className);
+  });
+  */
+  
+
+}
+
 Gmail.prototype.insertCss = function(csslink) {
   var css = $('<link rel="stylesheet" type="text/css">');
   css.attr('href', csslink);
@@ -435,6 +392,89 @@ Gmail.prototype.addDeveloperToolbar = function() {
 
 }
 
+/*
+// --- JSON Client
+// just messin' around.
+
+var Client = function(options) {
+  if (typeof(options) !== 'object') 
+    throw new TypeError ('options (object) is required');
+
+  this._url = options.url;
+  this._pretty = options.pretty || false;
+  this._timeout = options.timeout || 0;
+  this._contentType = 'application/json';
+  this._acceptsType = 'json'; // json, jsonp, xml, html or text
+
+  this.contentWriters = {
+    'application/json': function(v) {
+      if (this.pretty) {
+        return JSON.stringify(v, null, 2);
+      } else {
+        return JSON.stringify(v);
+      }
+    }
+  }
+
+}
+
+Client.prototype._request = function(method, path, data, callback) {
+  var self = this;
+  var ajaxOptions = {
+    type: 'GET', 
+    url: urlWithParams,
+    data: data,
+    contentType: self._contentType,
+    dataType: self._acceptsType,
+    timeout: self._timeout,
+    headers: {},
+    async: true,
+    global: true,
+    //content: window
+  }
+
+  ajaxOptions.success = function(data) {
+    return callback(null, data);
+  }
+
+  ajaxOptions.error = function(xhr, type) {
+    return callback(xhr, type);
+  }
+
+  $.ajax(ajaxOptions)
+
+}
+
+Client.prototype.serialize = function(data) {
+  return this.contentWriters[this._contentType](data);
+}
+
+Client.prototype.get = function(path, callback) {
+  this._request('GET', path, null, function(err, req, res, robj) {
+    return callback(err, req, res); 
+  });
+}
+
+Client.prototype.post = function(path, obj, callback) {
+  this._request('POST', path, obj, function(err, req, res, robj) {
+    return callback(err, req, res, robj);
+  });
+}
+
+Client.prototype.put = function(path, obj, callback) {
+  this._request('PUT', path, obj, function(err, req, res, robj) {
+    return callback(err, req, res, robj);
+  });
+}
+
+Client.prototype.del = function(path, callback) {
+  this._request('DELETE', path, null, function(err, req, res, robj) {
+    return callback(err, req, res); 
+  });
+}
+
+*/
+
 // ----------------------------------------------------
 // Main
 // ----------------------------------------------------
@@ -449,6 +489,8 @@ var main = function() {
   if (options.development) {
     gmail.addDeveloperToolbar();
   }
+
+  gmail.bindDOM();
 
 } 
 
