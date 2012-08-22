@@ -290,17 +290,21 @@ Gmail.prototype.addActionButton = function(label, options) {
   var label = label;
 
   var toInject = 
-    '<div class="G-Ni J-J5-Ji">' +
-    '<div class="T-I J-J5-Ji lS T-I-ax7 ar7" thrd_act="' + options.index + '"' +
+    '<div class="G-Ni J-J5-Ji thread-button">' +
+    '<div class="T-I J-J5-Ji lS T-I-ax7 ar7" thread-action="' + options.index + '"' +
     ' role="button" tabindex="0" style="' + options.style + '"' + 
     ' aria-label="' + label + '" data-tooltip="' + options.tooltip + '">' +
     '<div class="asa"><span class="Ykrj7h">' + label + '</span>' +
     '<div class="T-I-J3 J-J5-Ji"></div></div></div>'
 
-  return this._canvas().find('.iH')
+  this._canvas().find('.iH')
     .children()
     .first()
     .append(toInject);
+
+  // XXX this wont work with more than one button (well)
+  return this._canvas().find('.iH')
+    .find('.thread-button');
 
 }
 
@@ -351,6 +355,11 @@ Gmail.prototype.bindDOM = function() {
   });
 }
 
+Gmail.prototype._hideNotification = function() {
+  this._canvas().find('.UD').attr('style', '');
+  this._canvas().find('.UB').attr('style', '');
+  this._canvas().find('.vh').attr('style', '');
+}
 
 Gmail.prototype.notify = function(message, timeout) {
   var self = this;
@@ -369,11 +378,7 @@ Gmail.prototype.notify = function(message, timeout) {
   this._canvas().find('.UB').css('visibility', 'visible');
   this._canvas().find('.vh').css('visibility', 'visible');
 
-  setTimeout(function() {
-    self._canvas().find('.UD').attr('style', '');
-    self._canvas().find('.UB').attr('style', '');
-    self._canvas().find('.vh').attr('style', '');
-  }, timeout);
+  setTimeout(this._hideNotification, timeout);
 
 }
 
