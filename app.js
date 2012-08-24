@@ -118,27 +118,20 @@ Gmail.prototype.loadOriginal = function(id, callback) {
 }
 
 
-Gmail.prototype.createEvent = function(callback) {
+Gmail.prototype.createThread = function(callback) {
   // just posts the threadID to the appropriate API endpoint
 
   if (!this.isThread()) 
     if (callback) return callback(false);
 
-  var event = {
+  var thread = {
     user_email: this.emailAddress(),
     subject: this.threadSubject(),
-    thread_id: this.threadId(),
-    message_id: null,
-    inbound: true,
-    start_date: Date(),
-    duration: 30,
-    contact_email: 'notimplemented@example.com'
+    thread_uid: this.threadId()
   }
 
-  console.log(event);
-
-  $.post(options.apiHost + '/api/events.json', {event:event}, function(data) {
-    log.info('created event');
+  $.post(options.apiHost + '/api/threads.json', {thread:thread}, function(data) {
+    log.info('created thread');
     if (callback)
       return callback(null)
   });
@@ -157,7 +150,7 @@ Gmail.prototype.postOriginal = function(id, callback) {
 
     // Should probably be replaced with 
     // some kind of API Client function
-    // client.createEvent(data, callback);
+    // client.createThread(data, callback);
     // client.updateEvent(id, data, callback);
     // client.deleteEvent(id, callback);
     // client.getEvent(id, callback);
@@ -418,7 +411,7 @@ Gmail.prototype.addDeveloperToolbar = function() {
   });
  
   clickButton('#ebb #actions #create_event', function() {
-    self.createEvent();
+    self.createThread();
   })
 
   clickButton('#ebb #actions #submit', function() {
@@ -544,7 +537,8 @@ var main = function() {
 
       button.on('click', function() {
         log.trace('\'Thread\' button clicked!');
-        gmail.postOriginal(gmail.threadId());
+        //gmail.postOriginal(gmail.threadId());
+        gmail.createThread();
         gmail.notify('Created a new Thread');
       });
 
