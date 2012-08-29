@@ -18,7 +18,7 @@ var options = {
   development: false,
   logLevel: 'debug',
   cssLink: 'styles/thread.css',
-  apiHost: 'http://thread.herokuapp.com'
+  apiHost: 'http://localhost:3000'
 }
 
 // --- Libraries 
@@ -130,7 +130,7 @@ Gmail.prototype.createThread = function(callback) {
     thread_uid: this.threadId()
   }
 
-  $.post(options.apiHost + '/api/threads.json', {thread:thread}, function(data) {
+  $.post(options.apiHost + '/api/threads/chrome.json', {thread:thread}, function(data) {
     log.info('created thread');
     if (callback)
       return callback(null)
