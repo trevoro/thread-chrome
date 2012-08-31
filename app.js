@@ -18,7 +18,7 @@ var options = {
   development: false,
   logLevel: 'debug',
   cssLink: 'styles/thread.css',
-  apiHost: 'proto.thread.is'
+  apiHost: 'http://proto.thread.is'
 }
 
 // --- Libraries 
