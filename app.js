@@ -18,7 +18,7 @@ var options = {
   development: false,
   logLevel: 'debug',
   cssLink: 'styles/thread.css',
-  apiHost: 'http://proto.thread.is'
+  apiHost: 'http://localhost:3000'
 }
 
 // --- Libraries 
@@ -371,7 +371,7 @@ Gmail.prototype.notify = function(message, timeout) {
   this._canvas().find('.UB').css('visibility', 'visible');
   this._canvas().find('.vh').css('visibility', 'visible');
 
-  setTimeout(this._hideNotification, timeout);
+  setTimeout(function() { self._hideNotification(); }, timeout);
 
 }
 
