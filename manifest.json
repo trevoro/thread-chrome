@@ -5,7 +5,7 @@
   "default_locale": "en",
   "manifest_version" : 2,
   "browser_action": {
-    "default_icon":  "icons/icon.png",
+    "default_icon":  "icons/icon16.png",
     "default_title": "thread",
     "default_popup": "lib/popup/index.html"
   },
