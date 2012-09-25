@@ -1,7 +1,7 @@
 {
   "name": "thread",
   "version": "0.0.1",
-  "description": "calendars made easy",
+  "description": "Streamlining conversations, one Thread at a time",
   "default_locale": "en",
   "manifest_version" : 2,
   "browser_action": {
