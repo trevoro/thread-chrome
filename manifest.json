@@ -10,7 +10,7 @@
     "default_popup": "lib/popup/index.html"
   },
 
-  "options_page": "lib/options/index.html",
+  //"options_page": "lib/options/index.html",
 
   "content_scripts": [
     {
@@ -30,7 +30,6 @@
     "tabs",
     "http://mail.google.com/*",
     "https://mail.google.com/",
-    "http://localhost:3000/",
     "http://proto.thread.is/"
   ],
 
