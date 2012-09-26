@@ -9,6 +9,13 @@
     "default_title": "thread",
     "default_popup": "lib/popup/index.html"
   },
+  "icons": {
+    "16": "icons/icon16.png",
+    "19": "icons/icon19.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
 
   //"options_page": "lib/options/index.html",
 
