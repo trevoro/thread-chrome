@@ -4,6 +4,7 @@
 
    TODO:
 
+   * canvas_frame removal - more cleanup for body selector
    * incorporate handlebars for easier templating
    * gmail selectors for from, date, content body, etc
    * figure out how to scan a message body for dates
@@ -18,7 +19,7 @@ var options = {
   development: false,
   logLevel: 'debug',
   cssLink: 'styles/thread.css',
-  apiHost: 'http://proto.thread.is'
+  apiHost: 'https://beta.thread.is'
 }
 
 // --- Libraries 
@@ -178,7 +179,7 @@ Gmail.prototype.insertCss = function() {
 }
 
 Gmail.prototype.currentView = function() {
-  if (this._canvas().find('h1.ha').length > 0) {
+  if ($('h1.ha').length > 0) {
     return 'conversation';
   } else {
     return 'thread';
@@ -186,7 +187,7 @@ Gmail.prototype.currentView = function() {
 }
 
 Gmail.prototype.banner = function() {
-  return this._canvas().find(['role=banner']);
+  return $(['role=banner']);
 }
 
 Gmail.prototype.emailAddress = function() {
@@ -214,13 +215,17 @@ Gmail.prototype.numUnread = function() {
 }
 
 Gmail.prototype._canvas = function() {
-  return $(document.getElementById('canvas_frame').contentDocument)
+  //return $(document.getElementById('canvas_frame').contentDocument)
+  return $('body');
 }
 
 Gmail.prototype._body = function() {
+  return $('body');
+  /*
   return this._canvas()
            .find('body')
            .first();
+  */
 }
 
 Gmail.prototype.inboxUrl = function() {
@@ -290,13 +295,13 @@ Gmail.prototype.addActionButton = function(label, options) {
     '<div class="asa"><span class="Ykrj7h">' + label + '</span>' +
     '<div class="T-I-J3 J-J5-Ji"></div></div></div>'
 
-  this._canvas().find('.iH')
+  $('.iH')
     .children()
     .first()
     .append(toInject);
 
   // XXX this wont work with more than one button (well)
-  return this._canvas().find('.iH')
+  return $('.iH')
     .find('.thread-button');
 
 }
@@ -349,9 +354,9 @@ Gmail.prototype.bindDOM = function() {
 }
 
 Gmail.prototype._hideNotification = function() {
-  this._canvas().find('.UD').attr('style', '');
-  this._canvas().find('.UB').attr('style', '');
-  this._canvas().find('.vh').attr('style', '');
+  $('.UD').attr('style', '');
+  $('.UB').attr('style', '');
+  $('.vh').attr('style', '');
 }
 
 Gmail.prototype.notify = function(message, timeout) {
@@ -367,9 +372,9 @@ Gmail.prototype.notify = function(message, timeout) {
     .find('.vh')
     .html(message);
 
-  this._canvas().find('.UD').css('visibility', 'visible');
-  this._canvas().find('.UB').css('visibility', 'visible');
-  this._canvas().find('.vh').css('visibility', 'visible');
+  $('.UD').css('visibility', 'visible');
+  $('.UB').css('visibility', 'visible');
+  $('.vh').css('visibility', 'visible');
 
   setTimeout(function() { self._hideNotification(); }, timeout);
 

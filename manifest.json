@@ -37,7 +37,8 @@
     "tabs",
     "http://mail.google.com/*",
     "https://mail.google.com/",
-    "http://proto.thread.is/"
+    "https://beta.thread.is/",
+    "http://dev.thread.is/"
   ],
 
 
