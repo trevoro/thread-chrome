@@ -19,8 +19,8 @@ var options = {
   development: false,
   logLevel: 'debug',
   cssLink: 'styles/thread.css',
-  apiHost: 'https://beta.thread.is'
-}
+  apiHost: 'http://thread-rails.herokuapp.com'
+};
 
 // --- Libraries 
 
@@ -37,17 +37,17 @@ var Logger = function(options) {
   ];
 
   this._name = options.name;
-  this._level = options.level || 'INFO'
+  this._level = options.level || 'INFO';
 
-}
+};
 
 Logger.prototype.name = function() {
   return this._name;
-}
+};
 
 Logger.prototype.level = function() {
   return this._level;
-}
+};
 
 Logger.prototype._print = function(level, msg) {
   var toPrint = [
@@ -67,14 +67,14 @@ Logger.prototype._print = function(level, msg) {
       console.log(toPrint);
       break;
   }
-}
+};
 
-Logger.prototype.info   = function(msg) { this._print('INFO',   msg); }
-Logger.prototype.debug  = function(msg) { this._print('DEBUG',  msg); }
-Logger.prototype.trace  = function(msg) { this._print('TRACE',  msg); }
-Logger.prototype.notice = function(msg) { this._print('NOTICE', msg); }
-Logger.prototype.warn   = function(msg) { this._print('WARN',   msg); }
-Logger.prototype.error  = function(msg) { this._print('ERROR',  msg); }
+Logger.prototype.info   = function(msg) { this._print('INFO',   msg); };
+Logger.prototype.debug  = function(msg) { this._print('DEBUG',  msg); };
+Logger.prototype.trace  = function(msg) { this._print('TRACE',  msg); };
+Logger.prototype.notice = function(msg) { this._print('NOTICE', msg); };
+Logger.prototype.warn   = function(msg) { this._print('WARN',   msg); };
+Logger.prototype.error  = function(msg) { this._print('ERROR',  msg); };
 
 var Gmail = function() {
   this.inboxLink = null;
@@ -84,29 +84,29 @@ var Gmail = function() {
   if (!$) 
     throw new Error('Zepto must be initialized first');
 
-}
+};
 
 Gmail.prototype.threadId = function() {
   var location = String(document.location);
   return location.substr(location.lastIndexOf('/') + 1);
-}
+};
 
 Gmail.prototype.threadSubject = function() {
   return this._canvas()
     .find('.hP')
     //.filter(':visible') XXX need to build the selector module in zepto
     .text();
-}
+};
 
 Gmail.prototype.isThread = function() {
-  return (this.threadId() !== '#inbox')
-}
+  return (this.threadId() !== '#inbox');
+};
 
 Gmail.prototype._originalUrl = function(id) {
   //XXX make sure we return the right URL
   // is http vs https, apps domain, etc
   return 'https://mail.google.com/mail/u/0/?ui=2&ik=50e71a47f3&view=om&th=' + id;
-}
+};
 
 Gmail.prototype.loadOriginal = function(id, callback) {
   if (typeof(id) !== 'string') 
@@ -116,7 +116,7 @@ Gmail.prototype.loadOriginal = function(id, callback) {
     log.debug('original email [' + id + '] loaded');
     return callback(data);
   });
-}
+};
 
 
 Gmail.prototype.createThread = function(callback) {
@@ -129,15 +129,15 @@ Gmail.prototype.createThread = function(callback) {
     user_email: this.emailAddress(),
     subject: this.threadSubject(),
     thread_uid: this.threadId()
-  }
+  };
 
   $.post(options.apiHost + '/api/threads/chrome.json', {thread:thread}, function(data) {
     log.info('created thread');
     if (callback)
-      return callback(null)
+      return callback(null);
   });
 
-}
+};
 
 
 Gmail.prototype.postOriginal = function(id, callback) {
@@ -147,7 +147,7 @@ Gmail.prototype.postOriginal = function(id, callback) {
   this.loadOriginal(id, function(email) {
     var encoded = window.btoa(email);
     log.debug('encoded result length: ' + encoded.length);
-    var result = { base64: encoded }
+    var result = { base64: encoded };
 
     // Should probably be replaced with 
     // some kind of API Client function
@@ -168,15 +168,15 @@ Gmail.prototype.postOriginal = function(id, callback) {
     
   });
 
-}
+};
 
 Gmail.prototype.logo = function() {
   return this._canvas.find('[role=banner]');
-}
+};
 
 Gmail.prototype.insertCss = function() {
   // do something
-}
+};
 
 Gmail.prototype.currentView = function() {
   if ($('h1.ha').length > 0) {
@@ -184,11 +184,11 @@ Gmail.prototype.currentView = function() {
   } else {
     return 'thread';
   }
-}
+};
 
 Gmail.prototype.banner = function() {
   return $(['role=banner']);
-}
+};
 
 Gmail.prototype.emailAddress = function() {
 
@@ -198,13 +198,13 @@ Gmail.prototype.emailAddress = function() {
   $('.gbpc .gbps2, #gbg6, #gbg4', this._canvas()).each(function(i, elements) {
     console.log($(elements).text());
     e = $(elements).text();
-    if (e != undefined) {
+    if (e !== undefined) {
       return false;
     }
   });
 
   return e; //document.title.split(/ - /)[1];
-}
+};
 
 Gmail.prototype.numUnread = function() {
   var title, num;
@@ -212,12 +212,12 @@ Gmail.prototype.numUnread = function() {
   title = this.inboxUrl().title;
   num = /\((\d+)\)/.exec(title);
   return (num && num[1]) ? parseInt(num[1]) : 0;
-}
+};
 
 Gmail.prototype._canvas = function() {
   //return $(document.getElementById('canvas_frame').contentDocument)
   return $('body');
-}
+};
 
 Gmail.prototype._body = function() {
   return $('body');
@@ -226,7 +226,7 @@ Gmail.prototype._body = function() {
            .find('body')
            .first();
   */
-}
+};
 
 Gmail.prototype.inboxUrl = function() {
   var element, body, inbox;
@@ -239,7 +239,7 @@ Gmail.prototype.inboxUrl = function() {
  
   return inbox;
 
-}
+};
 
 Gmail.prototype.messageBody = function(index) {
   var messages, body;
@@ -255,19 +255,19 @@ Gmail.prototype.messageBody = function(index) {
   }
 
   return body;
-}
+};
 
 Gmail.prototype.messageBodyText = function(index) {
   var body = this.messageBody(index);
   if (body)
     return body.text();
-}
+};
 
 Gmail.prototype.messageBodyHtml = function(index) {
   var body = this.messageBody(index);
   if (body)
     return body.html();
-}
+};
 
 Gmail.prototype.addActionButton = function(label, options) {
 
@@ -278,7 +278,7 @@ Gmail.prototype.addActionButton = function(label, options) {
     index: 0,
     tooltip: label,
     style: "-webkit-user-select: none;"
-  }
+  };
 
   if (!options)
     options = defaultOptions;
@@ -293,7 +293,7 @@ Gmail.prototype.addActionButton = function(label, options) {
     ' role="button" tabindex="0" style="' + options.style + '"' + 
     ' aria-label="' + label + '" data-tooltip="' + options.tooltip + '">' +
     '<div class="asa"><span class="Ykrj7h">' + label + '</span>' +
-    '<div class="T-I-J3 J-J5-Ji"></div></div></div>'
+    '<div class="T-I-J3 J-J5-Ji"></div></div></div>';
 
   $('.iH')
     .children()
@@ -304,7 +304,7 @@ Gmail.prototype.addActionButton = function(label, options) {
   return $('.iH')
     .find('.thread-button');
 
-}
+};
 
 
 Gmail.prototype.on = function(event, callback) {
@@ -312,13 +312,13 @@ Gmail.prototype.on = function(event, callback) {
     this._eventQueues[event] = [];
   
   this._eventQueues[event].push(callback);
-}
+};
 
 Gmail.prototype._event = function() {
   var name, args;
 
   if (arguments.length == 0) 
-    throw new Error('name (string) must be provided')
+    throw new Error('name (string) must be provided');
 
   name = arguments[0];
   
@@ -329,7 +329,7 @@ Gmail.prototype._event = function() {
     var next = this._eventQueues[name][i];
     next.apply(this, args);
   }
-}
+};
 
 Gmail.prototype.bindDOM = function() {
   var self = this;
@@ -338,12 +338,12 @@ Gmail.prototype.bindDOM = function() {
   this._canvas().bind('DOMSubtreeModified', function(element) {
     // view change event handling
     if (self._canvas().find('.ha').length > 0) {
-      if (self.inConversationView == false) {
+      if (self.inConversationView === false) {
         self.inConversationView = true;
         self._event('viewchange', 'conversation');
       }
     } else {
-      if (self.inConversationView == true) {
+      if (self.inConversationView === true) {
         self.inConversationView = false;
         self._event('viewchange', 'thread');
       }
@@ -351,13 +351,13 @@ Gmail.prototype.bindDOM = function() {
 
 
   });
-}
+};
 
 Gmail.prototype._hideNotification = function() {
   $('.UD').attr('style', '');
   $('.UB').attr('style', '');
   $('.vh').attr('style', '');
-}
+};
 
 Gmail.prototype.notify = function(message, timeout) {
   var self = this;
@@ -378,7 +378,7 @@ Gmail.prototype.notify = function(message, timeout) {
 
   setTimeout(function() { self._hideNotification(); }, timeout);
 
-}
+};
 
 Gmail.prototype.insertCss = function(csslink) {
   var css = $('<link rel="stylesheet" type="text/css">');
@@ -386,7 +386,7 @@ Gmail.prototype.insertCss = function(csslink) {
   this._canvas()
     .find('head').first()
     .append(css);
-}
+};
 
 Gmail.prototype.addDeveloperToolbar = function() {
   log.info('adding dev toolbar');
@@ -405,8 +405,8 @@ Gmail.prototype.addDeveloperToolbar = function() {
 
 
   var clickButton = function(selector, action) {
-    self._body().find(selector).on('click', action)
-  }
+    self._body().find(selector).on('click', action);
+  };
 
   this._body().prepend(template);
 
@@ -417,12 +417,12 @@ Gmail.prototype.addDeveloperToolbar = function() {
  
   clickButton('#ebb #actions #create_event', function() {
     self.createThread();
-  })
+  });
 
   clickButton('#ebb #actions #submit', function() {
     id = gmail.threadId();
     self.postOriginal(id);
-  })
+  });
 
   clickButton('#ebb #actions #debug', function() {
     log.debug('printing debug output');
@@ -435,7 +435,7 @@ Gmail.prototype.addDeveloperToolbar = function() {
     console.log('-------------------------------------------------');
   });
 
-}
+};
 
 /*
 // --- JSON Client
@@ -552,7 +552,7 @@ var main = function() {
 
   gmail.bindDOM();
 
-} 
+};
 
 Zepto(function($) {
   log.info('zepto loaded');
